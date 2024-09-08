@@ -8,8 +8,8 @@ vocab_size = len(tokenizer.vocab.keys())
 max_token_size = 8#len(max(tokenizer.vocab.keys(), key=len))
 average_token_length = int(sum(len(token) for token in tokenizer.vocab.keys()) / vocab_size)
 
-# wrapper for tokenizing sentence
-def tokenize_sentence(text, tokenizer=tokenizer, space_indicator=("▁", " ")):
+# wrapper for tokenizing segment
+def tokenize_segment(text, tokenizer=tokenizer, space_indicator=("▁", " ")):
     """
     breaks up a string into tokens using provided tokenizer
 
@@ -25,10 +25,6 @@ def tokenize_sentence(text, tokenizer=tokenizer, space_indicator=("▁", " ")):
     Returns:
         list of str: A list of tokenized words with the "▁" character replaced by a space.
     """
-
-    #return text.split(" ")
-    
-    
     tokens = tokenizer.tokenize(text)
 
     # NOTE: this is not an underscore "_" its another UTF-8 character: "▁" side by side: "▁_"
