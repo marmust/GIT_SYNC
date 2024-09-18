@@ -1,34 +1,38 @@
-from transformers import AutoTokenizer
+import re
 
-# load / download tokenizer
-tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base")
+# get misc info about tokenizer (i just made these numbers up, theyre for security / optimization in REAN code)
+max_token_size = 12
+average_token_length = 5
 
-# get misc info aboutt tokenizer
-vocab_size = len(tokenizer.vocab.keys())
-max_token_size = 8#len(max(tokenizer.vocab.keys(), key=len))
-average_token_length = int(sum(len(token) for token in tokenizer.vocab.keys()) / vocab_size)
-
-# wrapper for tokenizing segment
-def tokenize_segment(text, tokenizer=tokenizer, space_indicator=("▁", " ")):
+def tokenize_segment(text, con_chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"):
     """
-    breaks up a string into tokens using provided tokenizer
-
-    Args:
-        text (str): The input text to be tokenized.
-        
-        tokenizer (transformers.PreTrainedTokenizer, optional): The tokenizer to use for tokenizing the text.
-            Defaults to the `xlm-roberta-base` tokenizer.
-            
-        space_indicator (tuple): Element 0 is the char to be replaced, element 1 is the one to replace with.
-            the character that the specific tokenizer replaces space with.
-
-    Returns:
-        list of str: A list of tokenized words with the "▁" character replaced by a space.
-    """
-    tokens = tokenizer.tokenize(text)
-
-    # NOTE: this is not an underscore "_" its another UTF-8 character: "▁" side by side: "▁_"
-    # remo, ▁ve, the, wie, ▁rd, und, ▁er, score    --->   remo, ve, the, wie, rd, und, er, score
-    tokens = [token.replace(*space_indicator) for token in tokens]
+    this function serves as the tokenizer for training and using both the word2vec, and REAN.
+    breaks up string given into a list of tokens (substrings).
+    to detokenize just use "".join() on the resulting list / or alternativly use tthe next function
     
+    Args:
+        text (str): the sequence to be tokenized
+        con_chars (str): constant chars - a string of all the chars to NOT break up, and keep the same in the same cells / tokens in the resulting list
+    
+    Returns:
+        list[str]: a list of tokens, representing text arg
+    """
+    
+    # dunno chatgpt wrote it
+    pattern = f"[{re.escape(con_chars)}]+(?: )?|[^\s{re.escape(con_chars)}]"
+
+    tokens = re.findall(pattern, text)
+
     return tokens
+
+def detokenize_segment(tokens):
+    """
+    a function to input tokens, and join them back into a readable sequence
+    
+    Args:
+        tokens (list[str]): sequence outputted by the tokenize_segment function, to be turned back intto normal text
+    
+    Returns
+    """
+    
+    return "".join(tokens)
