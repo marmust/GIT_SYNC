@@ -19,9 +19,14 @@ def tokenize_segment(text, con_chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP
     """
     
     # dunno chatgpt wrote it
-    pattern = f"[{re.escape(con_chars)}]+(?: )?|[^\s{re.escape(con_chars)}]"
-
-    tokens = re.findall(pattern, text)
+    pattern = fr"""
+        [{re.escape(con_chars)}]+        # Match one or more constant characters (words)
+        (?:[\s]+)?                       # Optionally include following whitespace
+      | [^\s{re.escape(con_chars)}]      # Match any single character not in constant characters or whitespace (punctuation)
+        (?:[\s]+)?                       # Optionally include following whitespace
+    """
+    
+    tokens = re.findall(pattern, text, re.VERBOSE)
 
     return tokens
 
@@ -32,7 +37,8 @@ def detokenize_segment(tokens):
     Args:
         tokens (list[str]): sequence outputted by the tokenize_segment function, to be turned back intto normal text
     
-    Returns
+    Returns:
+        (str): tokens sequence as normal string
     """
     
     return "".join(tokens)
