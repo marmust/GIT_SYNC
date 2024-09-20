@@ -2,7 +2,7 @@ import re
 
 # get misc info about tokenizer (i just made these numbers up, theyre for security / optimization in REAN code)
 max_token_size = 12
-average_token_length = 5
+average_token_length = 8
 
 def tokenize_segment(text, con_chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"):
     """
